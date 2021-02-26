@@ -7,18 +7,21 @@ function Timer() {
   const [sec, setSec] = useState(0);
   const [status, setStatus] = useState("stop");
 
+  let clicks = [];
+  let timeout;
+
   useEffect(() => {
-    const unsubscribe$ = new Subject();
+    const unsubscribeTimer = new Subject();
     interval(1000)
-      .pipe(takeUntil(unsubscribe$))
+      .pipe(takeUntil(unsubscribeTimer))
       .subscribe(() => {
         if (status === "run") {
           setSec((val) => val + 1000);
         }
       });
     return () => {
-      unsubscribe$.next();
-      unsubscribe$.complete();
+      unsubscribeTimer.next();
+      unsubscribeTimer.complete();
     };
   }, [status]);
 
@@ -33,11 +36,30 @@ function Timer() {
 
   const reset = React.useCallback(() => {
     setSec(0);
+    setStatus("run");
   }, []);
 
   const wait = React.useCallback(() => {
     setStatus("wait");
   }, []);
+
+  function clickHandler(event) {
+    event.preventDefault();
+    clicks.push(new Date().getTime());
+    window.clearTimeout(timeout);
+    timeout = window.setTimeout(() => {
+      if (
+        clicks.length > 1 &&
+        clicks[clicks.length - 1] - clicks[clicks.length - 2] < 300
+      ) {
+        wait();
+        // console.log("hi");
+      } else {
+        start();
+      }
+    }, 300);
+  }
+
   return (
     <div className="app">
       <span> {new Date(sec).toISOString().slice(11, 19)}</span>
@@ -50,7 +72,7 @@ function Timer() {
       <button className="button-reset" onClick={reset}>
         Reset
       </button>
-      <button className="button-wait" onClick={wait}>
+      <button className="button-wait" onClick={clickHandler}>
         Wait
       </button>
     </div>
