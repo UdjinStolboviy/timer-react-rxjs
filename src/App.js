@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { interval, Subject } from "rxjs";
+import { interval, Subject, Observable } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 import { makeStyles, createStyles } from "@material-ui/core/styles";
@@ -34,20 +34,34 @@ function Timer() {
   let clicks = [];
   let timeout;
 
+  // const stream$ = new Observable((observe) => {
+  //   const unsubscribeTimer = new Subject();
+  //   interval(1000)
+  //     .pipe(takeUntil(unsubscribeTimer))
+  //     .subscribe(() => {
+  //       if (status === "run") {
+  //         setSec((val) => val + 1000);
+  //       }
+  //     });
+  // });
+
   useEffect(() => {
-    const unsubscribeTimer = new Subject();
-    interval(1000)
-      .pipe(takeUntil(unsubscribeTimer))
-      .subscribe(() => {
-        if (status === "run") {
-          setSec((val) => val + 1000);
-        }
-      });
-    return () => {
-      unsubscribeTimer.next();
-      unsubscribeTimer.complete();
-    };
+    interval(1000).subscribe(() => {
+      if (status === "run") {
+        myObservable.subscribe();
+      } else {
+        takeUntil(myObservable);
+      }
+    });
   }, [status]);
+
+  let myObservable = new Observable((observ) => {
+    setTimeout(() => {
+      observ.next(setSec((val) => val + 1000));
+    }, 1000);
+
+    observ.complete();
+  });
 
   const start = React.useCallback(() => {
     setStatus("run");
