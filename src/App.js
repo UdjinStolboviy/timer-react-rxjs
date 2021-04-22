@@ -1,9 +1,33 @@
-import "./App.css";
 import React, { useEffect, useState } from "react";
 import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
+import { makeStyles, createStyles } from "@material-ui/core/styles";
+
+import Button from "@material-ui/core/Button";
+import PlayCircleFilledWhiteOutlinedIcon from "@material-ui/icons/PlayCircleFilledWhiteOutlined";
+import CancelOutlinedIcon from "@material-ui/icons/CancelOutlined";
+import ReplayOutlinedIcon from "@material-ui/icons/ReplayOutlined";
+import PauseCircleOutlineOutlinedIcon from "@material-ui/icons/PauseCircleOutlineOutlined";
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      display: "flex",
+      flexFlow: "column nowrap",
+      justifyContent: "center",
+      alignItems: "center",
+      fontFamily: "'Stardos Stencil', cursive",
+      fontSize: "50px",
+      "& > *": {
+        margin: theme.spacing(1),
+      },
+    },
+  })
+);
+
 function Timer() {
+  const classes = useStyles();
   const [sec, setSec] = useState(0);
   const [status, setStatus] = useState("stop");
 
@@ -53,7 +77,6 @@ function Timer() {
         clicks[clicks.length - 1] - clicks[clicks.length - 2] < 300
       ) {
         wait();
-        // console.log("hi");
       } else {
         start();
       }
@@ -61,20 +84,45 @@ function Timer() {
   }
 
   return (
-    <div className="app">
+    <div className={classes.root}>
       <span> {new Date(sec).toISOString().slice(11, 19)}</span>
-      <button className="button-start" onClick={start}>
+
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<PlayCircleFilledWhiteOutlinedIcon />}
+        size="large"
+        onClick={start}
+      >
         Start
-      </button>
-      <button className="button-stop" onClick={stop}>
+      </Button>
+      <Button
+        variant="outlined"
+        color="secondary"
+        startIcon={<CancelOutlinedIcon />}
+        size="large"
+        onClick={stop}
+      >
         Stop
-      </button>
-      <button className="button-reset" onClick={reset}>
+      </Button>
+
+      <Button
+        variant="outlined"
+        startIcon={<ReplayOutlinedIcon />}
+        size="large"
+        onClick={reset}
+      >
         Reset
-      </button>
-      <button className="button-wait" onClick={clickHandler}>
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<PauseCircleOutlineOutlinedIcon />}
+        size="large"
+        onClick={clickHandler}
+      >
         Wait
-      </button>
+      </Button>
     </div>
   );
 }
