@@ -1,6 +1,7 @@
 //import "./App.css";
+
 import React, { useEffect, useState } from "react";
-import { interval, Subject } from "rxjs";
+import { interval, Subject, Observable } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 import { makeStyles, createStyles } from "@material-ui/core/styles";
@@ -35,18 +36,29 @@ function Timer() {
   let clicks = [];
   let timeout;
 
+  // const stream$ = new Observable((observe) => {
+  //   const unsubscribeTimer = new Subject();
+  //   interval(1000)
+  //     .pipe(takeUntil(unsubscribeTimer))
+  //     .subscribe(() => {
+  //       if (status === "run") {
+  //         setSec((val) => val + 1000);
+  //       }
+  //     });
+  // });
+
   useEffect(() => {
-    const unsubscribeTimer = new Subject();
+    const unsubscribe$ = new Subject();
     interval(1000)
-      .pipe(takeUntil(unsubscribeTimer))
+      .pipe(takeUntil(unsubscribe$))
       .subscribe(() => {
         if (status === "run") {
           setSec((val) => val + 1000);
         }
       });
     return () => {
-      unsubscribeTimer.next();
-      unsubscribeTimer.complete();
+      unsubscribe$.next();
+      unsubscribe$.complete();
     };
   }, [status]);
 
@@ -61,7 +73,6 @@ function Timer() {
 
   const reset = React.useCallback(() => {
     setSec(0);
-    setStatus("run");
   }, []);
 
   const wait = React.useCallback(() => {
@@ -78,7 +89,6 @@ function Timer() {
         clicks[clicks.length - 1] - clicks[clicks.length - 2] < 300
       ) {
         wait();
-        // console.log("hi");
       } else {
         start();
       }
@@ -275,3 +285,35 @@ export default Timer;
 // }
 
 // export default Timer;
+
+// useEffect(() => {
+//   const unsubscribe$ = new Subject();
+//   interval(1000)
+//     .pipe(takeUntil(unsubscribe$))
+//     .subscribe(() => {
+//       if (status === "run") {
+//         setSec((val) => val + 1000);
+//       }
+//     });
+//   return () => {
+//     unsubscribe$.next();
+//     unsubscribe$.complete();
+//   };
+// }, [status]);
+
+// const start = React.useCallback(() => {
+//   setStatus("run");
+// }, []);
+
+// const stop = React.useCallback(() => {
+//   setStatus("stop");
+//   setSec(0);
+// }, []);
+
+// const reset = React.useCallback(() => {
+//   setSec(0);
+// }, []);
+
+// const wait = React.useCallback(() => {
+//   setStatus("wait");
+// }, []);

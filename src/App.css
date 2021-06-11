@@ -5,30 +5,11 @@
   align-items: center;
 }
 
-span {
+/* span {
   margin: 30px;
   font-weight: 800;
   line-height: 1.5;
   
-}
+} */
 
-button {
-  padding: 7px;
-  margin: 5px;
-  border-radius: 25%;
-  color:honeydew;
-}
 
-.button-start {
-  background-color:green;
-  
-}
-.button-stop {
-  background-color:red;
-}
-.button-reset {
-  background-color: darkorchid;
-}
-.button-wait {
-  background-color:deepskyblue;
-}
